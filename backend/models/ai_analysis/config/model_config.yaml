@@ -1,0 +1,44 @@
+# AI Analysis Model Configuration
+
+model:
+  name: "sdxl-detector"
+  version: "1.0.0"
+  type: "image_classification"
+  source: "Organika/sdxl-detector"
+
+features:
+  - ai_generation_detection
+  - confidence_scoring
+  - binary_classification
+  - real_time_analysis
+
+settings:
+  model_path: "models/sdxl-detector"
+  device: "auto"  # auto, cpu, cuda
+  batch_size: 1
+  max_file_size: "50MB"
+  
+  supported_formats:
+    - "JPEG"
+    - "PNG"
+    - "WEBP"
+    - "BMP"
+
+  classification:
+    threshold: 0.5
+    confidence_min: 0.1
+    output_labels:
+      - "natural"
+      - "artificial"
+
+performance:
+  timeout: 60
+  memory_limit: "2GB"
+  gpu_acceleration: true
+  model_caching: true
+
+output:
+  format: "json"
+  include_confidence: true
+  include_raw_scores: true
+  include_classification_details: true 

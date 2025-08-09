@@ -1,0 +1,14 @@
+tunnel: image-forensics
+credentials-file: /home/ubuntu/.cloudflared/credentials.json
+
+ingress:
+  # Route API calls to backend
+  - hostname: api.image-forensics.local
+    service: http://localhost:8000
+  
+  # Route everything else to frontend
+  - hostname: image-forensics.local
+    service: http://localhost:5174
+  
+  # Catch-all rule
+  - service: http_status:404

@@ -1,0 +1,51 @@
+# Tamper Detection Model Configuration
+
+model:
+  name: "trufor"
+  version: "1.0.0"
+  type: "image_forgery_detection"
+  source: "TruFor"
+
+features:
+  - tamper_detection
+  - integrity_scoring
+  - localization_maps
+  - confidence_assessment
+  - real_time_analysis
+
+settings:
+  model_path: "models/TruFor/TruFor_train_test/pretrained_models/trufor.pth.tar"
+  device: "auto"  # auto, cpu, cuda
+  batch_size: 1
+  max_file_size: "50MB"
+  
+  supported_formats:
+    - "JPEG"
+    - "PNG"
+    - "BMP"
+    - "TIFF"
+
+  detection:
+    integrity_threshold: 0.5
+    confidence_min: 0.1
+    localization_enabled: true
+    map_resolution: "high"
+
+  analysis:
+    binary_classification: true
+    integrity_scoring: true
+    localization_mapping: true
+    confidence_assessment: true
+
+performance:
+  timeout: 180
+  memory_limit: "6GB"
+  gpu_acceleration: true
+  model_caching: true
+
+output:
+  format: "json"
+  include_confidence: true
+  include_integrity_score: true
+  include_localization_map: true
+  include_detection_details: true 
