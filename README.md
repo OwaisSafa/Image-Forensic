@@ -82,7 +82,7 @@ chmod +x setup.sh
 ./setup.sh
 ```
 
-**Note**: The repository includes AI model files but not the virtual environment to keep the repository size manageable. The `setup.sh` script will create the virtual environment when you first run it. Some AI models like SDXL detector are downloaded automatically by their respective libraries on first use.
+**Note**: The repository includes AI model files but not the virtual environment to keep the repository size manageable. Large model files are handled by Git LFS for efficient storage. The `setup.sh` script will create the virtual environment when you first run it. Some AI models like SDXL detector are downloaded automatically by their respective libraries on first use.
 
 3. **Start the application**
 ```bash
@@ -238,6 +238,19 @@ The following models are downloaded automatically on first use:
 - **SDXL Detector**: ~1.5GB - Downloaded by Hugging Face Transformers
 
 **Note**: First-time setup may take 2-3 minutes depending on your internet connection.
+
+### Git LFS
+
+This repository uses Git Large File Storage (LFS) to handle large AI model files efficiently. When cloning the repository, you may need to install Git LFS:
+
+```bash
+# Install Git LFS (if not already installed)
+git lfs install
+
+# Clone the repository
+git clone https://github.com/owaissafa/Image-Forensic.git
+cd Image-Forensic
+```
 
 ## 🤝 Contributing
 

@@ -158,12 +158,8 @@ test_with_exif.jpg
 # Cloudflare binaries
 cloudflared-*.deb
 
-# Large files that shouldn't be in repo
-# *.safetensors
-# *.pth.tar
-# *.pth
-# *.pt
-# *.onnx
+# Large files handled by Git LFS
+# *.safetensors, *.pth, *.pt, *.onnx are tracked by Git LFS
 
 # Log files
 *.log
