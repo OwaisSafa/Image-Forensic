@@ -4,8 +4,8 @@ from datetime import datetime
 from typing import Dict, Any
 import logging
 
-from services.analysis_service import analysis_service
-from utils.file_utils import create_session_id, save_uploaded_file, cleanup_session, get_file_path
+from ..services.analysis_service import analysis_service
+from ..utils.file_utils import create_session_id, save_uploaded_file, cleanup_session, get_file_path
 from config.settings import VALID_SEARCH_ENGINES, get_dynamic_public_url
 
 logger = logging.getLogger(__name__)
