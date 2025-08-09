@@ -54,12 +54,12 @@ ENV/
 env.bak/
 venv.bak/
 
-# PyTorch model files (large binary files)
-*.pth
-*.pth.tar
-*.pt
-*.onnx
-*.safetensors
+# # PyTorch model files (large binary files)
+# *.pth
+# *.pth.tar
+# *.pt
+# *.onnx
+# *.safetensors
 
 # Node.js
 node_modules/
