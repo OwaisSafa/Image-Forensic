@@ -17,9 +17,21 @@ from pathlib import Path
 TRUFOR_LIB = Path(__file__).parent.parent / "models" / "tamper_detection" / "models" / "TruFor" / "TruFor_train_test"
 sys.path.insert(0, str(TRUFOR_LIB))
 
-from lib.config import config, update_config
-from lib.utils import get_model
-from dataset.dataset_test import TestDataset
+# Import TruFor dependencies with error handling
+try:
+    from lib.config import config, update_config
+    from lib.utils import get_model
+    from dataset.dataset_test import TestDataset
+    TRUFOR_AVAILABLE = True
+except ImportError as e:
+    print(f"[WARNING] TruFor library not available: {e}")
+    print("[WARNING] Tamper detection will be disabled")
+    TRUFOR_AVAILABLE = False
+    config = None
+    update_config = None
+    get_model = None
+    TestDataset = None
+
 from torch.nn import functional as F
 from addict import Dict as AttrDict
 
@@ -91,27 +103,35 @@ class AnalysisService:
             
             print("[DEBUG] Initializing TruFor model...")
             logger.info("[DEBUG] Initializing TruFor model...")
-            args = AttrDict()
-            args.gpu = 0 if torch.cuda.is_available() else -1
-            args.experiment = 'trufor_ph3'
-            model_path = TRUFOR_LIB / 'pretrained_models' / 'trufor.pth.tar'
-            args.opts = ['TEST.MODEL_FILE', str(model_path)]
+            
+            if not TRUFOR_AVAILABLE:
+                print("[WARNING] TruFor not available, skipping tamper detection initialization")
+                logger.warning("[WARNING] TruFor not available, skipping tamper detection initialization")
+                self.trufor_model = None
+                self.trufor_device = None
+                self.trufor_config = None
+            else:
+                args = AttrDict()
+                args.gpu = 0 if torch.cuda.is_available() else -1
+                args.experiment = 'trufor_ph3'
+                model_path = TRUFOR_LIB / 'pretrained_models' / 'trufor.pth.tar'
+                args.opts = ['TEST.MODEL_FILE', str(model_path)]
 
-            # Temporarily change CWD to TRUFOR_LIB
-            original_cwd = os.getcwd()
-            os.chdir(TRUFOR_LIB)
-            update_config(config, args)
-            os.chdir(original_cwd)
+                # Temporarily change CWD to TRUFOR_LIB
+                original_cwd = os.getcwd()
+                os.chdir(TRUFOR_LIB)
+                update_config(config, args)
+                os.chdir(original_cwd)
 
-            self.trufor_device = f'cuda:{args.gpu}' if args.gpu >= 0 else 'cpu'
-            self.trufor_config = config
+                self.trufor_device = f'cuda:{args.gpu}' if args.gpu >= 0 else 'cpu'
+                self.trufor_config = config
 
-            # Load TruFor model with optimizations
-            self.trufor_model = get_model(config)
-            checkpoint = torch.load(str(model_path), map_location=torch.device(self.trufor_device), weights_only=False)
-            self.trufor_model.load_state_dict(checkpoint['state_dict'])
-            self.trufor_model = self.trufor_model.to(self.trufor_device)
-            self.trufor_model.eval()
+                # Load TruFor model with optimizations
+                self.trufor_model = get_model(config)
+                checkpoint = torch.load(str(model_path), map_location=torch.device(self.trufor_device), weights_only=False)
+                self.trufor_model.load_state_dict(checkpoint['state_dict'])
+                self.trufor_model = self.trufor_model.to(self.trufor_device)
+                self.trufor_model.eval()
             
             # CPU optimizations
             if self.trufor_device == 'cpu':
@@ -171,11 +191,12 @@ class AnalysisService:
         try:
             print("[DEBUG] detect_tampering called for image: " + image_path)
             logger.info(f"[DEBUG] detect_tampering called for image: {image_path}")
-            if self.trufor_model is None:
+            
+            if not TRUFOR_AVAILABLE or self.trufor_model is None:
                 return {
                     "tamper_detection": {
-                        "error": "TruFor model not initialized.",
-                        "details": "Model failed to load during startup."
+                        "error": "TruFor model not available.",
+                        "details": "TruFor library or model failed to load. Tamper detection is disabled."
                     }
                 }
 
