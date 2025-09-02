@@ -20,7 +20,7 @@
   "scripts": {
     "dev": "vite",
     "dev:frontend": "vite",
-    "build": "vite build",
+    "build": "exit 1",
     "preview": "vite preview",
     "lint": "eslint .",
     "start": "vite preview"
